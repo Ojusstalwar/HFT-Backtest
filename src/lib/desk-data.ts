@@ -3,15 +3,12 @@
 // or use fetchDeskData() / useDeskData() for server-fresh values.
 
 import type { DeskSnapshot } from "./live-data";
+import { buildSnapshot } from "./live-data";
 
 export async function fetchDeskData(): Promise<DeskSnapshot | null> {
-  try {
-    const res = await fetch("/api/desk");
-    if (!res.ok) return null;
-    return (await res.json()) as DeskSnapshot;
-  } catch {
-    return null;
-  }
+  // Since GitHub Actions pushes data and triggers a Vercel rebuild,
+  // we can just statically bundle the JSON instead of requiring a backend server API!
+  return buildSnapshot();
 }
 
 
