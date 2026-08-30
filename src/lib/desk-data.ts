@@ -1,4 +1,19 @@
-// Static analytics snapshot for the dispersion arbitrage desk dashboard.
+// Desk data: static defaults + live API fetcher.
+// Components can import the static exports directly (zero-latency render)
+// or use fetchDeskData() / useDeskData() for server-fresh values.
+
+import type { DeskSnapshot } from "./live-data";
+
+export async function fetchDeskData(): Promise<DeskSnapshot | null> {
+  try {
+    const res = await fetch("/api/desk");
+    if (!res.ok) return null;
+    return (await res.json()) as DeskSnapshot;
+  } catch {
+    return null;
+  }
+}
+
 
 function seeded(i: number, a: number, b: number, c: number) {
   return Math.sin(i * a) * b + Math.cos(i * c) * (b * 0.6);

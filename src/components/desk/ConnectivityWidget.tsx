@@ -1,8 +1,8 @@
 import { Activity, CheckCircle2, Radio, ShieldCheck } from "lucide-react";
-import { connectivity } from "@/lib/desk-data";
 import { Panel, Pill } from "./primitives";
+import type { DeskSnapshot } from "@/lib/live-data";
 
-export function ConnectivityWidget() {
+export function ConnectivityWidget(connectivity: DeskSnapshot["connectivity"]) {
   return (
     <Panel
       eyebrow="Module 05 — Connectivity"

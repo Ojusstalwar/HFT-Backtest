@@ -1,8 +1,8 @@
 import { Bar, BarChart, Cell, CartesianGrid, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { execution, markouts } from "@/lib/desk-data";
 import { Panel, Pill, Ring, Stat } from "./primitives";
+import type { DeskSnapshot } from "@/lib/live-data";
 
-export function ExecutionPanel() {
+export function ExecutionPanel(execution: DeskSnapshot["execution"]) {
   return (
     <Panel
       eyebrow="Module 04 — Microstructure"
@@ -33,7 +33,7 @@ export function ExecutionPanel() {
         <div className="h-[280px] rounded-md border border-border bg-surface-2/40 p-3">
           <p className="label-xs mb-2 px-1">Markout slippage by horizon (bps)</p>
           <ResponsiveContainer width="100%" height="88%">
-            <BarChart data={markouts} margin={{ top: 4, right: 8, bottom: 0, left: -16 }}>
+            <BarChart data={execution.markouts} margin={{ top: 4, right: 8, bottom: 0, left: -16 }}>
               <CartesianGrid stroke="var(--color-grid)" strokeOpacity={0.3} vertical={false} />
               <XAxis
                 dataKey="horizon"
@@ -58,7 +58,7 @@ export function ExecutionPanel() {
               />
               <ReferenceLine y={0} stroke="var(--color-grid)" />
               <Bar dataKey="bps" radius={[2, 2, 2, 2]} barSize={26}>
-                {markouts.map((m) => (
+                {execution.markouts.map((m) => (
                   <Cell
                     key={m.horizon}
                     fill={m.bps >= 0 ? "var(--color-bull)" : "var(--color-bear)"}

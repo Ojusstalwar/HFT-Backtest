@@ -1,10 +1,10 @@
 import { useMemo, useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { basket, type BasketRow } from "@/lib/desk-data";
 import { Panel, Pill } from "./primitives";
 import { cn } from "@/lib/utils";
+import type { DeskSnapshot } from "@/lib/live-data";
 
-type Key = keyof BasketRow;
+type Key = keyof DeskSnapshot["basket"][number];
 
 const columns: { key: Key; label: string; numeric?: boolean }[] = [
   { key: "symbol", label: "Symbol" },
@@ -19,7 +19,7 @@ const columns: { key: Key; label: string; numeric?: boolean }[] = [
 const inr = (n: number, d = 2) =>
   n.toLocaleString("en-IN", { minimumFractionDigits: d, maximumFractionDigits: d });
 
-export function BasketTable() {
+export function BasketTable({ basket }: { basket: DeskSnapshot["basket"] }) {
   const [sort, setSort] = useState<{ key: Key; dir: "asc" | "desc" }>({ key: "weight", dir: "desc" });
 
   const rows = useMemo(() => {
