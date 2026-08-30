@@ -8,15 +8,18 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { correlationSeries, heroStats } from "@/lib/desk-data";
 import { Panel, Pill, Stat } from "./primitives";
+import type { DeskSnapshot } from "@/lib/live-data";
 
 const axis = {
   stroke: "var(--color-grid)",
   tick: { fill: "var(--color-muted-foreground)", fontSize: 11, fontFamily: "var(--font-mono)" },
 };
 
-export function DispersionPanel() {
+export function DispersionPanel({
+  heroStats,
+  correlationSeries,
+}: DeskSnapshot["dispersion"]) {
   return (
     <Panel
       eyebrow="Module 01 — Dispersion / Correlation"
@@ -32,6 +35,7 @@ export function DispersionPanel() {
       <div className="mt-6 h-[320px] w-full rounded-md border border-border bg-surface-2/40 p-3">
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={correlationSeries} margin={{ top: 8, right: 8, bottom: 0, left: -12 }}>
+
             <defs>
               <linearGradient id="spreadFill" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="var(--color-accent)" stopOpacity={0.35} />

@@ -9,10 +9,10 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { gammaProfile, gammaRegime } from "@/lib/desk-data";
 import { Panel, Pill, Ring } from "./primitives";
+import type { DeskSnapshot } from "@/lib/live-data";
 
-export function GammaPanel() {
+export function GammaPanel(gammaRegime: DeskSnapshot["gamma"]) {
   const positive = gammaRegime.positive;
   return (
     <Panel
@@ -28,7 +28,7 @@ export function GammaPanel() {
       <div className="grid gap-6 lg:grid-cols-[1.6fr_1fr]">
         <div className="h-[280px] rounded-md border border-border bg-surface-2/40 p-3">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={gammaProfile} layout="vertical" margin={{ top: 4, right: 12, bottom: 0, left: 4 }}>
+            <BarChart data={gammaRegime.profile} layout="vertical" margin={{ top: 4, right: 12, bottom: 0, left: 4 }}>
               <CartesianGrid stroke="var(--color-grid)" strokeOpacity={0.3} horizontal={false} />
               <XAxis
                 type="number"
@@ -67,7 +67,7 @@ export function GammaPanel() {
                 }}
               />
               <Bar dataKey="gamma" radius={[2, 2, 2, 2]} barSize={14}>
-                {gammaProfile.map((d) => (
+                {gammaRegime.profile.map((d) => (
                   <Cell
                     key={d.strike}
                     fill={d.gamma >= 0 ? "var(--color-primary)" : "var(--color-accent)"}

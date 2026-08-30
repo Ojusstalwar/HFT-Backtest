@@ -6,6 +6,7 @@ import { BasketTable } from "@/components/desk/BasketTable";
 import { ExecutionPanel } from "@/components/desk/ExecutionPanel";
 import { ConnectivityWidget } from "@/components/desk/ConnectivityWidget";
 import { useScrollY } from "@/hooks/use-scroll-fx";
+import { useDeskData } from "@/hooks/use-desk-data";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -40,21 +41,23 @@ const tape = [
   "PF 0.91",
 ];
 
-const MODULES = [
-  { id: "dispersion", label: "Dispersion", sub: "Vol Engine", el: <DispersionPanel /> },
-  { id: "gamma", label: "Gamma Regime", sub: "GEX Filter", el: <GammaPanel /> },
-  { id: "basket", label: "Basket", sub: "Vega-Neutral", el: <BasketTable /> },
-  { id: "execution", label: "Execution", sub: "Microstructure", el: <ExecutionPanel /> },
-  { id: "connectivity", label: "Connectivity", sub: "Live Feed", el: <ConnectivityWidget /> },
+const MODULE_TABS = [
+  { id: "dispersion", label: "Dispersion", sub: "Vol Engine" },
+  { id: "gamma", label: "Gamma Regime", sub: "GEX Filter" },
+  { id: "basket", label: "Basket", sub: "Vega-Neutral" },
+  { id: "execution", label: "Execution", sub: "Microstructure" },
+  { id: "connectivity", label: "Connectivity", sub: "Live Feed" },
 ] as const;
 
-type ModuleId = (typeof MODULES)[number]["id"];
+type ModuleId = (typeof MODULE_TABS)[number]["id"];
 
 function Index() {
   const y = useScrollY();
   const [progress, setProgress] = useState(0);
   const [active, setActive] = useState<ModuleId>("dispersion");
   const [entering, setEntering] = useState(true);
+
+  const { data, isLoading } = useDeskData();
 
   useEffect(() => {
     const h = document.documentElement.scrollHeight - window.innerHeight;
@@ -143,7 +146,7 @@ function Index() {
           aria-label="Desk modules"
           className="mb-6 grid grid-cols-2 gap-2 sm:grid-cols-5"
         >
-          {MODULES.map((m) => {
+          {MODULE_TABS.map((m) => {
             const isActive = m.id === active;
             return (
               <button
@@ -179,7 +182,23 @@ function Index() {
               entering ? "translate-y-0 opacity-100 [transform:rotateX(0deg)]" : "translate-y-4 opacity-0 [transform:rotateX(3deg)]"
             }`}
           >
-            {MODULES.find((m) => m.id === active)?.el}
+            {!data ? (
+              <div className="flex h-64 items-center justify-center rounded-md border border-border bg-surface-2/40">
+                <span className="relative flex size-4 items-center justify-center">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
+                  <span className="relative inline-flex size-3 rounded-full bg-primary" />
+                </span>
+                <span className="ml-3 text-sm text-muted-foreground">Loading desk data...</span>
+              </div>
+            ) : (
+              <>
+                {active === "dispersion" && <DispersionPanel {...data.dispersion} />}
+                {active === "gamma" && <GammaPanel {...data.gamma} />}
+                {active === "basket" && <BasketTable basket={data.basket} />}
+                {active === "execution" && <ExecutionPanel {...data.execution} />}
+                {active === "connectivity" && <ConnectivityWidget {...data.connectivity} />}
+              </>
+            )}
           </div>
         </div>
 
