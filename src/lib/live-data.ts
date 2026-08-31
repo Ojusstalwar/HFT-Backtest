@@ -81,49 +81,56 @@ export function buildSnapshot(): DeskSnapshot {
   }));
 
   const summary = d.summary || {};
+  const avgImplied = summary.avg_implied_correlation ?? 0.514;
+  const avgRealized = summary.avg_realized_correlation ?? 0.024;
+  const spread = avgImplied - avgRealized;
+  const filteredPnl = summary.total_pnl_gex_filtered ?? 8.160;
+  const rawPnl = summary.total_pnl_unfiltered ?? 8.090;
+
   const heroStats = [
     {
       label: "Implied Correlation",
-      value: String(summary.implied_corr ?? "0.514"),
-      delta: "+0.031",
+      value: String(Number(avgImplied).toFixed(3)),
+      delta: spread > 0 ? "+" + spread.toFixed(3) : spread.toFixed(3),
       dir: "up" as const,
       note: "Market-priced",
     },
     {
       label: "Realized Correlation",
-      value: String(summary.realized_corr ?? "0.024"),
+      value: String(Number(avgRealized).toFixed(3)),
       delta: "-0.008",
       dir: "down" as const,
       note: "Actual 60d",
     },
     {
       label: "Spread Premium",
-      value:
-        "+" +
-        (
-          (summary.implied_corr ?? 0.514) - (summary.realized_corr ?? 0.024)
-        ).toFixed(3),
-      delta: "+0.039",
-      dir: "up" as const,
+      value: (spread >= 0 ? "+" : "") + spread.toFixed(3),
+      delta: (spread >= 0 ? "+" : "") + spread.toFixed(3),
+      dir: spread >= 0 ? "up" as const : "down" as const,
       note: "Edge captured",
     },
     {
       label: "Filtered P&L",
-      value: "+" + String(summary.gex_filtered_pnl ?? "8.160"),
-      delta: "+0.070",
-      dir: "up" as const,
-      note: "Raw +" + String(summary.raw_pnl ?? "8.090"),
+      value: (filteredPnl >= 0 ? "+" : "") + Number(filteredPnl).toFixed(3),
+      delta: (filteredPnl - rawPnl) >= 0
+        ? "+" + (filteredPnl - rawPnl).toFixed(3)
+        : (filteredPnl - rawPnl).toFixed(3),
+      dir: filteredPnl >= 0 ? "up" as const : "down" as const,
+      note: "Raw " + (rawPnl >= 0 ? "+" : "") + Number(rawPnl).toFixed(3),
     },
   ];
 
   const gex = d.gex_analysis || {};
+  const winRateStr = summary.winning_days_of_active || "48/58";
+  const [winsStr, sessionsStr] = winRateStr.split("/");
+
   const gamma = {
-    positive: false,
+    positive: (gex.avg_gex_when_active ?? -1) >= 0,
     flipStrike: "24,118",
-    netGex: String(gex.total_gex ?? "-1.42") + " Cr / pt",
+    netGex: String(gex.avg_gex_when_active ?? "-1.42") + " Cr / pt",
     winRate: summary.win_rate_pct ?? 82.8,
-    wins: summary.winning_days ?? 48,
-    sessions: summary.active_days ?? 58,
+    wins: parseInt(winsStr) || 48,
+    sessions: parseInt(sessionsStr) || 58,
     profile: (gex.strike_profile || [
       { strike: "23400", gamma: -412 },
       { strike: "23600", gamma: -318 },
@@ -138,14 +145,27 @@ export function buildSnapshot(): DeskSnapshot {
     ]) as Array<{ strike: string; gamma: number }>,
   };
 
+  // Map basket from Python format (ticker/target_vega/lots_to_buy) to UI format
   const sizing = d.basket_sizing_snapshot || {};
-  const basket = (sizing.constituents || [
-    { symbol: "RELIANCE", weight: 10.2, spot: 1398.5, iv: 22.0, vega: 4.85, sizing: 2040, lots: 10 },
-    { symbol: "HDFCBANK", weight: 8.9, spot: 727.0, iv: 19.0, vega: 3.12, sizing: 1780, lots: 14 },
-    { symbol: "ICICIBANK", weight: 7.6, spot: 1245.0, iv: 21.0, vega: 4.2, sizing: 1520, lots: 8 },
-    { symbol: "INFY", weight: 6.1, spot: 1890.0, iv: 24.0, vega: 5.1, sizing: 1220, lots: 6 },
-    { symbol: "TCS", weight: 4.8, spot: 4120.0, iv: 18.0, vega: 6.3, sizing: 960, lots: 4 },
-  ]) as Array<{ symbol: string; weight: number; spot: number; iv: number; vega: number; sizing: number; lots: number }>;
+  const rawBasket: any[] = sizing.basket || [];
+  const constituentIvs: Record<string, number> = sizing.constituent_ivs || {};
+  const basket = rawBasket.length > 0
+    ? rawBasket.map((item: any) => ({
+        symbol: item.ticker,
+        weight: Number((item.weight * 100).toFixed(1)),
+        spot: 0, // not in dispersion report
+        iv: Number(((constituentIvs[item.ticker] ?? 0) * 100).toFixed(1)),
+        vega: item.vega_per_lot,
+        sizing: Math.round(item.target_vega),
+        lots: item.lots_to_buy,
+      }))
+    : [
+        { symbol: "RELIANCE", weight: 10.2, spot: 1398.5, iv: 22.0, vega: 4.85, sizing: 2040, lots: 10 },
+        { symbol: "HDFCBANK", weight: 8.9, spot: 727.0, iv: 19.0, vega: 3.12, sizing: 1780, lots: 14 },
+        { symbol: "ICICIBANK", weight: 7.6, spot: 1245.0, iv: 21.0, vega: 4.2, sizing: 1520, lots: 8 },
+        { symbol: "INFY", weight: 6.1, spot: 1890.0, iv: 24.0, vega: 5.1, sizing: 1220, lots: 6 },
+        { symbol: "TCS", weight: 4.8, spot: 4120.0, iv: 18.0, vega: 6.3, sizing: 960, lots: 4 },
+      ];
 
   const metrics = b.metrics || {};
   const markoutRaw = b.markout || {};
