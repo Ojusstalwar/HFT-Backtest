@@ -3,8 +3,8 @@
 // To make data truly live, replace the static reads with Groww API calls
 // or a scheduled re-computation that writes fresh JSON.
 
-import dispersionReport from "../../data/dispersion_report.json";
-import backtestReport from "../../data/backtest_report.json";
+import dispersionReport from "../data/dispersion_report.json";
+import backtestReport from "../data/backtest_report.json";
 
 export interface DeskSnapshot {
   timestamp: string;
