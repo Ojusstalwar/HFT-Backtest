@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { Panel, Pill } from "./primitives";
 import { cn } from "@/lib/utils";
@@ -21,16 +21,41 @@ const inr = (n: number, d = 2) =>
 
 export function BasketTable({ basket }: { basket: DeskSnapshot["basket"] }) {
   const [sort, setSort] = useState<{ key: Key; dir: "asc" | "desc" }>({ key: "weight", dir: "desc" });
+  const [liveSpots, setLiveSpots] = useState<Record<string, number>>({});
+
+  useEffect(() => {
+    // Poll the serverless API every 2 seconds for live market quotes
+    const fetchSpots = async () => {
+      try {
+        const res = await fetch("/api/live-spots");
+        if (res.ok) {
+          const data = await res.json();
+          if (data.spots) setLiveSpots(data.spots);
+        }
+      } catch (e) {
+        // ignore network errors in polling
+      }
+    };
+    fetchSpots();
+    const timer = setInterval(fetchSpots, 2000);
+    return () => clearInterval(timer);
+  }, []);
 
   const rows = useMemo(() => {
-    const sorted = [...basket].sort((a, b) => {
+    // Merge live spots into the basket
+    const mergedBasket = basket.map(r => ({
+      ...r,
+      spot: liveSpots[r.symbol] ?? r.spot
+    }));
+
+    const sorted = [...mergedBasket].sort((a, b) => {
       const av = a[sort.key];
       const bv = b[sort.key];
       if (typeof av === "number" && typeof bv === "number") return av - bv;
       return String(av).localeCompare(String(bv));
     });
     return sort.dir === "desc" ? sorted.reverse() : sorted;
-  }, [sort]);
+  }, [sort, basket, liveSpots]);
 
   const maxWeight = Math.max(...basket.map((r) => r.weight));
 
@@ -41,7 +66,7 @@ export function BasketTable({ basket }: { basket: DeskSnapshot["basket"] }) {
     <Panel
       eyebrow="Module 03 — Basket construction"
       title="Vega-Neutral Single-Stock Basket"
-      right={<Pill tone="muted">NIFTY constituents</Pill>}
+      right={<Pill tone="muted" className="animate-pulse bg-bull/10 text-bull">LIVE MARKET FEED</Pill>}
     >
       <div className="overflow-x-auto rounded-md border border-border">
         <table className="w-full min-w-[720px] text-sm">
@@ -73,25 +98,31 @@ export function BasketTable({ basket }: { basket: DeskSnapshot["basket"] }) {
             </tr>
           </thead>
           <tbody>
-            {rows.map((r) => (
-              <tr key={r.symbol} className="border-t border-border/70 transition-colors hover:bg-surface-2/50">
-                <td className="px-3 py-2.5 font-medium tracking-tight">{r.symbol}</td>
-                <td className="px-3 py-2.5 text-right">
-                  <span className="num">{r.weight.toFixed(1)}%</span>
-                  <span className="mt-1 block h-1 w-full overflow-hidden rounded-full bg-grid">
-                    <span
-                      className="block h-full rounded-full bg-primary"
-                      style={{ width: `${(r.weight / maxWeight) * 100}%` }}
-                    />
-                  </span>
-                </td>
-                <td className="num px-3 py-2.5 text-right">{inr(r.spot)}</td>
-                <td className="num px-3 py-2.5 text-right">{r.iv.toFixed(1)}%</td>
-                <td className="num px-3 py-2.5 text-right">{inr(r.vega)}</td>
-                <td className="num px-3 py-2.5 text-right">{inr(r.sizing, 0)}</td>
-                <td className="num px-3 py-2.5 text-right text-primary">{r.lots}</td>
-              </tr>
-            ))}
+            {rows.map((r) => {
+              // Highlight the row if the spot price changed recently
+              const isLive = liveSpots[r.symbol] !== undefined;
+              return (
+                <tr key={r.symbol} className="border-t border-border/70 transition-colors hover:bg-surface-2/50">
+                  <td className="px-3 py-2.5 font-medium tracking-tight">{r.symbol}</td>
+                  <td className="px-3 py-2.5 text-right">
+                    <span className="num">{r.weight.toFixed(1)}%</span>
+                    <span className="mt-1 block h-1 w-full overflow-hidden rounded-full bg-grid">
+                      <span
+                        className="block h-full rounded-full bg-primary"
+                        style={{ width: `${(r.weight / maxWeight) * 100}%` }}
+                      />
+                    </span>
+                  </td>
+                  <td className={cn("num px-3 py-2.5 text-right transition-colors duration-500", isLive ? "text-bull font-bold" : "")}>
+                    {inr(r.spot)}
+                  </td>
+                  <td className="num px-3 py-2.5 text-right">{r.iv.toFixed(1)}%</td>
+                  <td className="num px-3 py-2.5 text-right">{inr(r.vega)}</td>
+                  <td className="num px-3 py-2.5 text-right">{inr(r.sizing, 0)}</td>
+                  <td className="num px-3 py-2.5 text-right text-primary">{r.lots}</td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
