@@ -66,7 +66,7 @@ export function BasketTable({ basket }: { basket: DeskSnapshot["basket"] }) {
     <Panel
       eyebrow="Module 03 — Basket construction"
       title="Vega-Neutral Single-Stock Basket"
-      right={<Pill tone="muted" className="animate-pulse bg-bull/10 text-bull">LIVE MARKET FEED</Pill>}
+      right={<Pill tone="bull">LIVE MARKET FEED</Pill>}
     >
       <div className="overflow-x-auto rounded-md border border-border">
         <table className="w-full min-w-[720px] text-sm">

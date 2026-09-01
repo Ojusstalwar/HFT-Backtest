@@ -1,4 +1,5 @@
 import { json } from "@tanstack/react-start";
+// @ts-ignore
 import { createAPIFileRoute } from "@tanstack/react-start/api";
 import { buildSnapshot } from "../../lib/live-data";
 

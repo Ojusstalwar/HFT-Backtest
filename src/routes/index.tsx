@@ -53,7 +53,7 @@ function Index() {
     `IMPL CORR ${data.dispersion.heroStats[0]?.value ?? "0.00"}`,
     `REAL CORR ${data.dispersion.heroStats[1]?.value ?? "0.00"}`,
     `SPREAD ${data.dispersion.heroStats[2]?.value ?? "0.00"}`,
-    `GEX ${data.gamma.heroStats[0]?.value ?? "0.00"} Cr/pt`,
+    `GEX ${data.gamma.netGex} Cr/pt`,
     `VEGA DRIFT 0.00`,
     `FILL ${((data.execution.fills / data.execution.orders) * 100).toFixed(1)}%`,
     `PF ${data.execution.profitFactor}`,
