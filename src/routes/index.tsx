@@ -30,17 +30,6 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-const tape = [
-  "NIFTY 24,118",
-  "IMPL CORR 0.514",
-  "REAL CORR 0.024",
-  "SPREAD +0.489",
-  "GEX -1.42 Cr/pt",
-  "VEGA DRIFT 0.00",
-  "FILL 13.0%",
-  "PF 0.91",
-];
-
 const MODULE_TABS = [
   { id: "dispersion", label: "Dispersion", sub: "Vol Engine" },
   { id: "gamma", label: "Gamma Regime", sub: "GEX Filter" },
@@ -58,6 +47,19 @@ function Index() {
   const [entering, setEntering] = useState(true);
 
   const { data, isLoading } = useDeskData();
+
+  const tape = data ? [
+    `NIFTY ${(data.basket.find(b => b.symbol === "INDEX (SELL)")?.spot ?? 24800).toLocaleString()}`,
+    `IMPL CORR ${data.dispersion.heroStats[0]?.value ?? "0.00"}`,
+    `REAL CORR ${data.dispersion.heroStats[1]?.value ?? "0.00"}`,
+    `SPREAD ${data.dispersion.heroStats[2]?.value ?? "0.00"}`,
+    `GEX ${data.gamma.heroStats[0]?.value ?? "0.00"} Cr/pt`,
+    `VEGA DRIFT 0.00`,
+    `FILL ${((data.execution.fills / data.execution.orders) * 100).toFixed(1)}%`,
+    `PF ${data.execution.profitFactor}`,
+  ] : [
+    "LOADING...", "LOADING...", "LOADING...", "LOADING...", "LOADING..."
+  ];
 
   useEffect(() => {
     const h = document.documentElement.scrollHeight - window.innerHeight;
