@@ -23,12 +23,12 @@
     ]
   },
   "summary": {
-    "total_pnl_unfiltered": -3.753108,
-    "total_pnl_gex_filtered": -3.753108,
+    "total_pnl_unfiltered": -3.752552,
+    "total_pnl_gex_filtered": -3.752552,
     "gex_filter_improvement_pct": 0.0,
     "avg_implied_correlation": 0.0767,
     "avg_realized_correlation": 0.3253,
-    "avg_correlation_spread": -0.2487,
+    "avg_correlation_spread": -0.2486,
     "correlation_spread_std": 0.1429,
     "winning_days_of_active": "4/70",
     "win_rate_pct": 5.7
@@ -40,19 +40,19 @@
     },
     "active_days": 70,
     "inactive_days": 0,
-    "avg_gex_when_active": -179310.7
+    "avg_gex_when_active": -179541.82
   },
   "basket_sizing_snapshot": {
-    "index_iv": 0.0517,
+    "index_iv": 0.0522,
     "constituent_ivs": {
-      "RELIANCE": 0.1956,
-      "HDFCBANK": 0.1072,
-      "ICICIBANK": 0.1494,
-      "SBIN": 0.2094,
-      "TCS": 0.3458,
-      "INFY": 0.205
+      "RELIANCE": 0.1949,
+      "HDFCBANK": 0.1071,
+      "ICICIBANK": 0.1529,
+      "SBIN": 0.2145,
+      "TCS": 0.3467,
+      "INFY": 0.2048
     },
-    "implied_correlation": -0.163,
+    "implied_correlation": -0.1611,
     "target_vega_notional": 50000,
     "basket": [
       {
@@ -60,49 +60,56 @@
         "weight": 0.2871,
         "target_vega": 14353.31,
         "vega_per_lot": 800.0,
-        "lots_to_buy": 18
+        "lots_to_buy": 18,
+        "spot": 1302.0
       },
       {
         "ticker": "HDFCBANK",
         "weight": 0.183,
         "target_vega": 9148.26,
         "vega_per_lot": 1045.0,
-        "lots_to_buy": 9
+        "lots_to_buy": 9,
+        "spot": 708.45
       },
       {
         "ticker": "ICICIBANK",
         "weight": 0.164,
         "target_vega": 8201.89,
         "vega_per_lot": 980.0,
-        "lots_to_buy": 8
+        "lots_to_buy": 8,
+        "spot": 1428.0
       },
       {
         "ticker": "SBIN",
         "weight": 0.1546,
         "target_vega": 7728.71,
         "vega_per_lot": 1500.0,
-        "lots_to_buy": 5
+        "lots_to_buy": 5,
+        "spot": 1030.8
       },
       {
         "ticker": "TCS",
         "weight": 0.1356,
         "target_vega": 6782.33,
         "vega_per_lot": 665.0,
-        "lots_to_buy": 10
+        "lots_to_buy": 10,
+        "spot": 2360.8
       },
       {
         "ticker": "INFY",
         "weight": 0.0757,
         "target_vega": 3785.49,
         "vega_per_lot": 680.0,
-        "lots_to_buy": 6
+        "lots_to_buy": 6,
+        "spot": 1150.1
       },
       {
         "ticker": "INDEX (SELL)",
         "weight": 1.0,
         "target_vega": 50000.0,
         "vega_per_lot": 300.0,
-        "lots_to_buy": -167
+        "lots_to_buy": -167,
+        "spot": 23992.55
       }
     ],
     "net_vega": -0.01
@@ -250,7 +257,7 @@
       -0.0153,
       -0.0147,
       -0.0433,
-      -0.163
+      -0.1611
     ],
     "realized_correlation": [
       0.5,
@@ -322,7 +329,7 @@
       0.1453,
       0.2014,
       0.2537,
-      0.1604
+      0.1542
     ],
     "correlation_spread": [
       -0.4424,
@@ -394,7 +401,7 @@
       -0.1606,
       -0.2161,
       -0.297,
-      -0.3234
+      -0.3152
     ],
     "cumulative_pnl_unfiltered": [
       -0.066364,
@@ -466,7 +473,7 @@
       -3.617508,
       -3.644494,
       -3.692957,
-      -3.753108
+      -3.752552
     ],
     "cumulative_pnl_filtered": [
       -0.066364,
@@ -538,7 +545,7 @@
       -3.617508,
       -3.644494,
       -3.692957,
-      -3.753108
+      -3.752552
     ],
     "gex_regime": [
       "SHORT_GAMMA",
@@ -682,7 +689,7 @@
       -105878.53,
       28560.38,
       -275422.37,
-      -97728.64
+      -113907.19
     ],
     "index_iv": [
       0.1293,
@@ -754,7 +761,7 @@
       0.0804,
       0.0814,
       0.0805,
-      0.0517
+      0.0522
     ]
   }
 }

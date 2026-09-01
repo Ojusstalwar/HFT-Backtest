@@ -153,7 +153,7 @@ export function buildSnapshot(): DeskSnapshot {
     ? rawBasket.map((item: any) => ({
         symbol: item.ticker,
         weight: Number((item.weight * 100).toFixed(1)),
-        spot: 0, // not in dispersion report
+        spot: item.spot ?? 0,
         iv: Number(((constituentIvs[item.ticker] ?? 0) * 100).toFixed(1)),
         vega: item.vega_per_lot,
         sizing: Math.round(item.target_vega),
