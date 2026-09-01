@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev",
-    "build": "NITRO_PRESET=vercel vite build",
+    "build": "vite build && cp -r .output/public dist || xcopy /E /I .output\\public dist",
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint .",
