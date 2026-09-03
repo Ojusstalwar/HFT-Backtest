@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchDeskData } from "@/lib/desk-data";
+import { buildSnapshot } from "@/lib/live-data";
 import type { DeskSnapshot } from "@/lib/live-data";
 
 /**
@@ -10,7 +10,10 @@ import type { DeskSnapshot } from "@/lib/live-data";
 export function useDeskData() {
   return useQuery<DeskSnapshot | null>({
     queryKey: ["desk-snapshot"],
-    queryFn: fetchDeskData,
+    queryFn: async () => {
+      // Return the snapshot directly to avoid Vercel serverless 404s
+      return buildSnapshot();
+    },
     refetchInterval: 5 * 60 * 1000, // re-fetch every 5 minutes
     staleTime: 2 * 60 * 1000,       // data considered fresh for 2 min
     retry: 2,
