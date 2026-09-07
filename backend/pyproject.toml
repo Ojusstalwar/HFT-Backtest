@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=68.0", "cython>=3.0", "numpy>=1.24"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hft-backtester"
+version = "0.1.0"
+description = "Professional-grade event-driven HFT backtesting engine for Indian markets (NSE/BSE)"
+requires-python = ">=3.11"
+dependencies = [
+    "numpy>=1.24",
+    "pandas>=2.0",
+    "pyarrow>=12.0",
+    "pyyaml>=6.0",
+    "scipy>=1.10",
+    "statsmodels>=0.14",
+    "py_vollib>=1.0.1",
+    "fastapi>=0.100",
+    "uvicorn>=0.22",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "cython>=3.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]

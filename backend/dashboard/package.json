@@ -1,0 +1,11 @@
+{
+  "name": "hft-dispersion-platform",
+  "version": "1.0.0",
+  "description": "HFT Microstructure & Volatility Dispersion Arbitrage Platform",
+  "scripts": {
+    "start": "serve ."
+  },
+  "dependencies": {
+    "serve": "^14.2.4"
+  }
+}

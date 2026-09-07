@@ -1,0 +1,61 @@
+name: Daily Groww Analytics Pipeline
+
+on:
+  schedule:
+    # Runs at 10:15 UTC (3:45 PM IST) Monday-Friday, right after NSE/BSE market close
+    - cron: '15 10 * * 1-5'
+  workflow_dispatch: # Allows manual trigger from GitHub UI
+
+permissions:
+  contents: write
+
+jobs:
+  run-backtest-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Dependencies
+        working-directory: ./backend
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install websockets
+
+      - name: Run Dispersion & HFT Engine
+        working-directory: ./backend
+        env:
+          GROWW_API_KEY: ${{ secrets.GROWW_API_KEY }}
+          GROWW_API_SECRET: ${{ secrets.GROWW_API_SECRET }}
+          GROWW_TOTP_SECRET: ${{ secrets.GROWW_TOTP_SECRET }}
+        run: |
+          python run_dispersion_backtest.py
+          python run_real_backtest.py
+          ls -la results/
+
+      - name: Update Data and Push
+        run: |
+          # Copy generated data to frontend
+          cp backend/results/dispersion_report.json src/data/
+          cp backend/results/backtest_report.json src/data/
+          
+          # Configure Git
+          git config --global user.name "GitHub Actions Bot"
+          git config --global user.email "actions@github.com"
+          
+          git add src/data/*.json
+          
+          if git diff --staged --quiet; then
+            echo "No data changes detected. Skipping push."
+          else
+            git commit -m "chore: daily groww market data update"
+            git push
+            echo "Successfully pushed new data! Vercel build triggered."
+          fi

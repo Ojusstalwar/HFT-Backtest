@@ -1,0 +1,46 @@
+# WARNING: EXAMPLE ONLY — NOT VALIDATED. DO NOT USE FOR REAL BACKTESTS.
+calibration_source: "Illustrative example for demo/testing only"
+
+latency:
+  feed:
+    distribution: lognormal
+    params: { mu_us: 50, sigma_us: 15 }
+  processing:
+    distribution: constant
+    params: { value_us: 10 }
+  order_ingress:
+    distribution: lognormal
+    params: { mu_us: 50, sigma_us: 15 }
+  ack_egress:
+    distribution: lognormal
+    params: { mu_us: 40, sigma_us: 12 }
+
+bounds:
+  min_us: 1
+  max_us: 1000000
+
+fill_model:
+  fill_probability_discount: 0.7
+  fill_discount_source: "Uncalibrated placeholder — demo only"
+  queue_cancellation_model: pessimistic
+
+fees:
+  stamp_duty_rate: 0.00003
+  stamp_duty_state: "Maharashtra"
+  broker_commission_per_order: 20.0
+
+greeks:
+  risk_free_rate:
+    type: constant
+    value: 0.065
+    rate_source: "RBI repo rate estimate — demo only"
+  dividend_yield:
+    type: constant
+    constant_yield: 0.012
+
+data_path: "data/"
+symbols: ["RELIANCE", "TCS"]
+initial_capital: 10000000
+max_position_limit: 10000
+max_drawdown_pct: 0.05
+max_order_rate_per_sec: 100
