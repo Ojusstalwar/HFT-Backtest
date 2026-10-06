@@ -194,7 +194,8 @@ def run_dispersion_simulation():
     
     if returns_df is None or returns_df.empty:
         logger.error("Failed to fetch real market data. Aborting.")
-        return
+        import sys
+        sys.exit(1)
         
     dates = returns_df.index
     logger.info(f"Loaded {len(dates)} days of real returns.")
