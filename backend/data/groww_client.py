@@ -70,10 +70,25 @@ class GrowwAPIClient:
         symbols = ["^NSEI"] + [f"{sym}.NS" for sym in constituents]
         
         end_date = datetime.now()
-        start_date = end_date - timedelta(days=days * 2) # Get extra days to ensure we have enough trading days
+        start_date = end_date - timedelta(days=days * 2)
         
         try:
-            df = yf.download(symbols, start=start_date, end=end_date, progress=False)["Close"]
+            import time
+            import requests
+            session = requests.Session()
+            session.headers.update({
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+            })
+            
+            series_list = []
+            for sym in symbols:
+                # Fetch serially to avoid GitHub Actions parallel rate limit blocks
+                df_sym = yf.download(sym, start=start_date, end=end_date, session=session, progress=False)["Close"]
+                df_sym.name = sym
+                series_list.append(df_sym)
+                time.sleep(1) # Prevent 429 Too Many Requests
+                
+            df = pd.concat(series_list, axis=1)
             
             # Keep only the last N trading days
             df = df.dropna().tail(days)
