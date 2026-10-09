@@ -309,10 +309,10 @@ def run_dispersion_simulation():
     final_index_iv = float(index_iv_df.iloc[-1]["index_iv"])
 
     # Extract real spot prices from the client
-    index_spot = float(getattr(client, "last_prices", {}).get("^NSEI", 24800))
+    index_spot = float(getattr(client, "last_prices", {}).get("NIFTY", 24800))
     spot_prices = {}
     for t in tickers:
-        spot_prices[t] = float(getattr(client, "last_prices", {}).get(f"{t}.NS", 1000))
+        spot_prices[t] = float(getattr(client, "last_prices", {}).get(t, 1000))
 
     index_leg = OptionLeg("NIFTY", spot=index_spot, strike=index_spot, iv=final_index_iv,
                           vega_per_contract=12.0, lot_size=25)

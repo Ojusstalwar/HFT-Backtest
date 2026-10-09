@@ -62,7 +62,7 @@
         "target_vega": 14353.31,
         "vega_per_lot": 800.0,
         "lots_to_buy": 18,
-        "spot": 1000.0
+        "spot": 1170.3
       },
       {
         "ticker": "HDFCBANK",
@@ -70,7 +70,7 @@
         "target_vega": 9148.26,
         "vega_per_lot": 1045.0,
         "lots_to_buy": 9,
-        "spot": 1000.0
+        "spot": 707.25
       },
       {
         "ticker": "ICICIBANK",
@@ -78,7 +78,7 @@
         "target_vega": 8201.89,
         "vega_per_lot": 980.0,
         "lots_to_buy": 8,
-        "spot": 1000.0
+        "spot": 1355.0
       },
       {
         "ticker": "SBIN",
@@ -86,7 +86,7 @@
         "target_vega": 7728.71,
         "vega_per_lot": 1500.0,
         "lots_to_buy": 5,
-        "spot": 1000.0
+        "spot": 959.1
       },
       {
         "ticker": "TCS",
@@ -94,7 +94,7 @@
         "target_vega": 6782.33,
         "vega_per_lot": 665.0,
         "lots_to_buy": 10,
-        "spot": 1000.0
+        "spot": 2156.0
       },
       {
         "ticker": "INFY",
@@ -102,7 +102,7 @@
         "target_vega": 3785.49,
         "vega_per_lot": 680.0,
         "lots_to_buy": 6,
-        "spot": 1000.0
+        "spot": 1023.4
       },
       {
         "ticker": "INDEX (SELL)",
@@ -110,7 +110,7 @@
         "target_vega": 50000.0,
         "vega_per_lot": 300.0,
         "lots_to_buy": -167,
-        "spot": 24800.0
+        "spot": 22520.45
       }
     ],
     "net_vega": -0.01
